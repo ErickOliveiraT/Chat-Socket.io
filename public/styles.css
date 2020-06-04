@@ -8,6 +8,20 @@ h2{
     color: #575ed8;
 }
 
+.group {
+    width: 100px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.group-active {
+     background-color: #868ad3;   
+}
+
+.d-inline {
+    display: inline-block;
+}
+
 #mario-chat{
     max-width: 600px;
     margin: 30px auto;

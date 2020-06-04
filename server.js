@@ -30,10 +30,21 @@ app.post('/autenticate', (req,res) => { //Autentica um usuário
 
 var io = socket(server);
 
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
+    // quando começa o chat já entra no grupo geral
+    socket.join("grupo1");
+
     console.log(`Um cliente se conectou!\tid = ${socket.id}`);
     
-    socket.on('chat', function(data) {
-        io.sockets.emit('chat', data);
+    socket.on('chat', function (data) {
+        io.sockets.to(data.group).emit('chat', data);
+    })
+
+    socket.on('change_group', function (data) {
+        socket.leave(data.oldGroup);
+        socket.broadcast.to(data.oldGroup).emit('chat', { handle: data.handle, message: `${data.handle} saiu do grupo` });
+        socket.join(data.newGroup);
+        socket.broadcast.to(data.newGroup).emit('chat', { handle: data.handle, message: `${data.handle} entrou no grupo` });
+        console.log(`${data.handle} saiu do grupo ${data.oldGroup} entrou em ${data.newGroup}`);
     })
 });
