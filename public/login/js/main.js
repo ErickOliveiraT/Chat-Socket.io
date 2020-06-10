@@ -1,5 +1,3 @@
-import { response } from "express";
-
 (function ($) {
     "use strict";
 
@@ -19,33 +17,36 @@ import { response } from "express";
     /*==================================================================
     [ Validate ]*/
     var input = $('.validate-input .input100');
+    
 
-    $('.validate-form').on('submit', function () {
+    $('.validate-form').on('submit', function (e) {
+        e.preventDefault();
+        console.log('Email: ', input[0].value);
+        console.log('Senha: ', input[1].value);
         //Autenticação:
-        const data = {
+        var data = {
             login: input[0].value,
             password: input[1].value
         }
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-        fetch('http://localhost:4000', options)
-            .then((response) => {
-                console.log(response);
-            })
-        //var check = true;
-        //console.log('Email: ', input[0].value);
-        //console.log('Senha: ', input[1].value);
-        /* for (var i = 0; i < input.length; i++) {
-            if (validate(input[i]) == false) {
-                showValidate(input[i]);
-                check = false;
-            }
-        } */
+        fetch("http://localhost:4000/autenticate", {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
+          "body": JSON.stringify(data)
+        })
+        .then((res) => {
+            return res.json();
+        })
+        .then((json) => {
+            console.log(json);
+            if (json.valid) window.location.href = 'http://localhost:4000';
+            else showValidate(input[1]);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     });
 
     $('.validate-form .input100').each(function () {

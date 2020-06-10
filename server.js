@@ -1,4 +1,5 @@
 const express = require('express');
+const path =  require('path');
 const socket = require('socket.io');
 const md5 = require('md5');
 const cors = require('cors');
@@ -10,13 +11,20 @@ const server = app.listen(4000, function() {
 });
 
 const router = express.Router();
-app.use(cors());
+app.use(cors())
 app.use(express.json())
 app.use('/', router);
 app.use(express.static('public'));
 
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
 
-app.post('/autenticate', (req,res) => { //Autentica um usuário
+app.get('/login', function(req, res) {
+    res.sendFile(__dirname + '/public/login/login.html');
+});
+
+app.post('/autenticate', cors(), (req,res) => { //Autentica um usuário
     const user = {
         login: req.body.login,
         password_hash: md5(req.body.password)
