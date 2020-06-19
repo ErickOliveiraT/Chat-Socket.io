@@ -1,17 +1,32 @@
 body{
-    font-family: 'Nunito';
+    font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #286340;
+    font-size: 1em;
+    letter-spacing: 0.1px;
+    color: #32465a;
+    text-rendering: optimizeLegibility;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.005);
+    -webkit-font-smoothing: antialised; 
 }
 
 h2{
     font-size: 18px;
     padding: 10px 20px;
-    color: #575ed8;
+    color: #2e2a1e;
 }
 
 .group {
-    width: 100px;
+    width: 100%;
     display: inline-block;
     cursor: pointer;
+    border-color: black;
+    border-style: solid;
+    border-width: 0px 0px 2px 0px; 
+    color: black;
 }
 
 .group-active {
@@ -23,18 +38,49 @@ h2{
 }
 
 #mario-chat{
-    max-width: 600px;
-    margin: 30px auto;
-    border: 1px solid #ddd;
+    
+    width: 95%;
+    min-width: 360px; 
+    max-width: 1000px;
+    height: 92vh;
+    min-height: 300px;
+    max-height: 720px;
+    background: #E6EAEA;
+    border: 2px solid black;
     box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
     border-radius: 2px;
 }
 
+#chat-groups{
+    display: flex;
+    justify-content: flex-start;
+    justify-content: space-around;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px 0px;
+}
+
 #chat-window{
+    display: flex;
     height: 400px;
     overflow: auto;
     background: #f9f9f9;
+    width: 75%;
+    position:relative;
+    border: 0px 0px 0px 2px solid black;
 }
+
+#groups{
+    display: flex;
+    align-items: flex-start ;
+    flex-direction: column;
+    height: 400px;
+    overflow: auto;
+    background: #535050; 
+    width: 25%;
+    border: 2px 2px 2px 0px solid black ;
+}
+
 
 #output p{
     padding: 14px 0px;
@@ -76,8 +122,30 @@ button{
     background: #575ed8;
     color: #fff;
     font-size: 18px;
-    border: 0;
+    border: 1px;
     padding: 12px 0;
     width: 100%;
+    border-color: rgb(45, 49, 49);
     border-radius: 0 0 2px 2px;
+    cursor: pointer;
 }
+
+
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+ 
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
