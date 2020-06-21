@@ -41,6 +41,7 @@
         })
         .then((json) => {
             console.log(json);
+            // localStorage.setItem('userId', json.id);
             if (json.valid) window.location.href = 'http://localhost:4000';
             else showValidate(input[1]);
         })

@@ -63,11 +63,11 @@ h2{
 #chat-window{
     display: flex;
     height: 400px;
-    overflow: auto;
     background: #f9f9f9;
     width: 75%;
     position:relative;
     border: 0px 0px 0px 2px solid black;
+    flex-direction: column;
 }
 
 #groups{
@@ -81,6 +81,9 @@ h2{
     border: 2px 2px 2px 0px solid black ;
 }
 
+#output {
+    overflow: auto;
+}
 
 #output p{
     padding: 14px 0px;
@@ -148,4 +151,12 @@ button{
   
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
+  }
+
+  .hide {
+    display: none;
+  }
+
+  .show {
+    display: block;
   }
