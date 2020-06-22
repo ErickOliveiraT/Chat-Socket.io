@@ -21,8 +21,8 @@
 
     $('.validate-form').on('submit', function (e) {
         e.preventDefault();
-        console.log('Email: ', input[0].value);
-        console.log('Senha: ', input[1].value);
+        //console.log('Email: ', input[0].value);
+        //console.log('Senha: ', input[1].value);
         //Autenticação:
         var data = {
             login: input[0].value,

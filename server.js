@@ -64,7 +64,11 @@ app.post('/group', async (req, res) => {
     console.log('create group: ', group);
     try {
         const response = await groups.createGroup(group);
-        if (response.created) return res.status(200).send(JSON.stringify(response));
+        if (response.created) {
+            const _response = await groups.addUser({email: group.owner, group: group.name});
+            if (_response.added) return res.status(200).send(JSON.stringify(response));
+            else return res.status(200).send(JSON.stringify({status: 'WARNING', created: true, added: false}))
+        }
         res.status(400).send(JSON.stringify(response));
     } catch (error) {
         res.status(400).send(error);
