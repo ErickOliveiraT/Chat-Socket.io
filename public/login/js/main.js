@@ -42,7 +42,8 @@
         .then((json) => {
             if (json.token) {
                 localStorage.setItem('token', json.token);
-                localStorage.setItem('logged_user', input[0].value);
+                localStorage.setItem('logged_user_email', input[0].value);
+                localStorage.setItem('logged_user_name', json.name);
             }
             if (json.valid) window.location.href = 'http://localhost:4000';
             else showValidate(input[1]);
