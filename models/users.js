@@ -24,6 +24,25 @@ function authenticate(user) {
     });
 }
 
+function storeUser(user) {
+    return new Promise(async (resolve, reject) => {
+        let con = await database.getConnection();
+        
+        con.connect(function(err) {
+            if (err) reject({added: false, error: err});
+            var sql = `INSERT INTO users(name, email, password) VALUES('${user.name}','${user.email}','${user.password_hash}')`;
+            con.query(sql, function (err, result) {
+                if (err) {
+                    let error = err;
+                    if (err.code == 'ER_DUP_ENTRY') error = 'Esse usuário já existe';
+                    reject({added: false, error: error});
+                }
+                resolve({added: true});
+            });
+        });
+    });
+}
+
 function getUser(email) {
     return new Promise(async (resolve) => {
         let con = await database.getConnection();
@@ -52,4 +71,4 @@ async function getNames(data) {
     return map;
 }
 
-module.exports = {authenticate, getNames}
+module.exports = {authenticate, getNames, storeUser}

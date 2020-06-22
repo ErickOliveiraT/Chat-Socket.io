@@ -38,6 +38,23 @@ app.post('/authenticate', cors(), async (req,res) => {
     }
 });
 
+// Rota para adicionar usuário
+app.post('/user/add', cors(), async (req,res) => { 
+    const user = {
+        email: req.body.email,
+        name: req.body.name,
+        password_hash: md5(req.body.password)
+    };
+    console.log('add user: ', user);
+    try {
+        const response = await users.storeUser(user);
+        if (response.added) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 // Rota de criação de grupo
 app.post('/group', async (req, res) => {
     const group = {
