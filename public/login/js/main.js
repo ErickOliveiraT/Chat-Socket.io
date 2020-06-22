@@ -28,7 +28,7 @@
             login: input[0].value,
             password: input[1].value
         }
-        fetch("http://localhost:4000/autenticate", {
+        fetch("http://localhost:4000/authenticate", {
           "method": "POST",
           "headers": {
             "content-type": "application/json",
@@ -40,8 +40,10 @@
             return res.json();
         })
         .then((json) => {
-            console.log(json);
-            // localStorage.setItem('userId', json.id);
+            if (json.token) {
+                localStorage.setItem('token', json.token);
+                localStorage.setItem('logged_user', input[0].value);
+            }
             if (json.valid) window.location.href = 'http://localhost:4000';
             else showValidate(input[1]);
         })

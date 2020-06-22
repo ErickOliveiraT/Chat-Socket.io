@@ -3,6 +3,8 @@ const socket = require('socket.io');
 const md5 = require('md5');
 const cors = require('cors');
 const users = require('./models/users');
+const groups = require('./models/groups');
+const messages = require('./models/messages');
 
 const app = express();
 
@@ -10,84 +12,122 @@ app.use(cors());
 app.use(express.json());
 app.use('/', express.static('public'));
 
-// -----------SUGESTÃO: ------------
-/* 
-Se não quiser implementar login com token pra n ter esse trabalho 
-substitui a rota principal '/' por '/chat' e a de login '/login' para '/'
-quando o usuario acessar localhost:4000/ vai para pagina de login
-daí no front quando usuario fazer login eu chamo /authenticate 
-e se tiver valido guardo o id do usuario voce que retornar e o front redireciona para '/chat',
-no '/chat' eu dou um get em '/user/:id/groups' passando o id do usuario e voce me 
-retorna os grupos que ele faz parte pra eu montar a tela
-*/
-
+// Tela inicial do chat
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+// Tela de login
 app.get('/login', function (req, res) {
     res.sendFile(__dirname + '/public/login/login.html');
 });
 
-app.post('/autenticate', cors(), (req,res) => { //Autentica um usuário
+// Rota de autenticação
+app.post('/authenticate', cors(), async (req,res) => { 
     const user = {
         login: req.body.login,
         password_hash: md5(req.body.password)
     };
-    console.log(user)
-    users.autenticate(user)
-    .then((response) => {res.send(JSON.stringify(response));})
-    .catch((error) => {res.status(400).send(error)});
+    console.log('auth: ', user);
+    try {
+        const response = await users.authenticate(user);
+        if (response.valid) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
-// rota de criar grupo
-app.post('/group', function (res, res) {
-    // RECEBE: {name: 'Grupo 1', owner: 'bruno123'}
-    // CRIA GRUPO NO BANCO e adiciona no grupo o usuario owner
-    // RETORNA: {created: true, groupId} ou {created: false}
-    res.send({ created: true });
+// Rota de criação de grupo
+app.post('/group', async (req, res) => {
+    const group = {
+        name: req.body.name,
+        owner: req.body.owner
+    }
+    console.log('create group: ', group);
+    try {
+        const response = await groups.createGroup(group);
+        if (response.created) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
-// rota de adicionar usuario no grupo
-app.post('/group/user/add', function (res, res) {
-    // RECEBE: {email, group} // email do usuario e grupo que sera alocado
-    // adiciona usuario no grupo
-    // RETORNA: {added: true} ou {added: false}
-    res.send({ added: true });
+// Rota para adicionar usuario no grupo
+app.post('/group/user/add', async (req, res) => {
+    const info = {
+        email: req.body.email,
+        group: req.body.group
+    }
+    console.log('add to group: ', info);
+    try {
+        const response = await groups.addUser(info);
+        if (response.added) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
-// rota de remover usuario do grupo
-app.delete('/group/:groupId/user/:userId', function (res, res) {
-    // RECEBE: no req.params o groupId (id do grupo que usuario ira sair) e o userId (usuario que vai sair do grupo do groupId passado)
-    // pega usuario e tira do grupo
-    // RETORNA: {removed: true}  
-    res.send({ removed: true });
+// Rota para remover usuario do grupo
+app.delete('/group/:groupName/user/:userEmail', async (req, res) => {
+    const info = {
+        email: req.params.userEmail,
+        group: req.params.groupName
+    }
+    console.log('remove from group: ', info);
+    try {
+        const response = await groups.removeUser(info);
+        if (response.removed) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
-// rota de buscar os grupos que o usuario faz parte
-// uso essa rota quando usuario entra na pagina do chat para preencher os grupos da tela
-app.get('/user/:userId/groups', function (res, res) {
-    // RECEBE: no req.params o userId do usuario e retorna o nome dos grupos que ele faz parte
-    // pega nome dos grupos que o usuario faz parte
-    // RETORNA: {groups: ['grupo 1', 'grupo 2']}  
-    res.send({ groups: ['grupo 500'] });
+// Rota para buscar os grupos que o usuario faz parte
+// Uso essa rota quando usuario entra na pagina do chat para preencher os grupos da tela
+app.get('/user/:userEmail/groups', async (req, res) => {
+    const userEmail = req.params.userEmail;
+    console.log('get groups: ', userEmail);
+    try {
+        const response = await groups.getGroups(userEmail);
+        res.status(200).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
-// rota para salvar mensagem
-app.post('/message', function (res, res) {
-    // RECEBE: {message: 'conteudo mensagem', userId: 1, groupName: 'grupo 2'}
-    // salva mensagem
-    // RETORNA: {saved: true} ou {saved:false}
-    res.send({ saved: true });
+// Rota para salvar mensagem
+app.post('/message', async (req, res) => {
+    const msg = {
+        userEmail: req.body.user,
+        groupName: req.body.groupName,
+        message: req.body.message
+    }
+    console.log('save message: ', msg);
+    try {
+        const response = await messages.saveMessage(msg);
+        if (response.saved) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
-// rota para pegar mensagens do grupo
-// uso quando o usuario seleciona um grupo eu pego as mensagens anteriores
-app.get('/group/:groupId/messages', function (res, res) {
-    // RECEBE: groupId no req.params
-    // busca mensagens(acho que pode ser as ultimas 30 sei la) do grupo, retorna quem mandou(userSent), e a mensagem(msg)
-    // RETORNA: {messages: [{userSent: 'joao', msg: 'conteudo mensagem'}]} ou {saved:false}
-    res.send({ messages: [{ userSent: 'joao', msg: 'conteudo mensagem' }] });
+// Rota para pegar mensagens do grupo
+// Uso quando o usuario seleciona um grupo eu pego as mensagens anteriores
+app.get('/group/:groupName/messages', async (req, res) => {
+    const groupName = req.params.groupName;
+    console.log('get messages: ', groupName);
+    try {
+        const response = await messages.getMessages(groupName);
+        if(!response.error) return res.status(200).send(JSON.stringify(response));
+        res.status(200).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
 const server = app.listen(4000, function () {
