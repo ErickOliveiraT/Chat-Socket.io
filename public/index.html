@@ -39,34 +39,34 @@
     </div>
 
     <!-- CREATE GROUP MODAL -->
-    <div id="create_group_modal" class="modal hide" style="position: absolute; z-index: 999; border: 1px solid black;">
-        <h1>Criar Grupo</h1>
-        <form>
+    <div id="create_group_modal" class="modal hide" style="position: absolute; z-index: 999; ">        
+        <form class="popup_modal">
+            <h1>Criar Grupo</h1>
             <input id="group_name" type="text" placeholder="Nome do Grupo" />
-            <button id="submit_group">Criar</button>
-            <button class="close_modal">Cancelar</button>
+            <button class="submit_modal" id="submit_group">Criar</button>
+            <button class="close_modal">x</button>
         </form>
     </div>
 
     <!-- ADD USER GROUP MODAL -->
     <div id="add_user_group_modal" class="modal hide"
-        style="position: absolute; z-index: 999; border: 1px solid black;">
-        <h1>Adicionar Membro</h1>
-        <form>
+        style="position: absolute; z-index: 999; ">      
+        <form class="popup_modal">
+            <h1>Adicionar Membro</h1>
             <input id="add_user_email" type="text" placeholder="email" />
-            <button id="submit_add_user">Adicionar</button>
-            <button class="close_modal">Cancelar</button>
+            <button class="submit_modal" id="submit_add_user">Adicionar</button>
+            <button class="close_modal">x</button>
         </form>
     </div>
 
     <!-- REMOVE USER GROUP MODAL -->
     <div id="remove_user_group_modal" class="modal hide"
-        style="position: absolute; z-index: 999; border: 1px solid black;">
-        <h1>Remover Membro</h1>
-        <form>
+        style="position: absolute; z-index: 999; ">        
+        <form class="popup_modal">
+            <h1>Remover Membro</h1>
             <input id="remove_user_email" type="text" placeholder="email" />
-            <button id="submit_remove_user">Remover</button>
-            <button class="close_modal">Cancelar</button>
+            <button class="submit_modal" id="submit_remove_user">Remover</button>
+            <button class="close_modal">x</button>
         </form>
     </div>
 
