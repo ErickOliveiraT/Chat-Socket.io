@@ -75,6 +75,19 @@ app.post('/group', async (req, res) => {
     }
 });
 
+// Rota para remoção de grupo
+app.delete('/group/:groupName', async (req, res) => {
+    const group = { name: decodeURI(req.params.groupName) }
+    console.log('remove group: ', group);
+    try {
+        const response = await groups.removeGroup(group);
+        if (response.removed) return res.status(200).send(JSON.stringify(response));
+        res.status(400).send(JSON.stringify(response));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 // Rota para adicionar usuario no grupo
 app.post('/group/user/add', async (req, res) => {
     const info = {
@@ -159,11 +172,12 @@ var io = socket(server);
 
 io.on('connection', function (socket) {
     // quando começa o chat já entra no grupo geral
-    socket.join("grupo1");
+    socket.join("Group 1");
 
     console.log(`Um cliente se conectou!\tid = ${socket.id}`);
     
     socket.on('chat', function (data) {
+        console.log('here: ', data)
         io.sockets.to(data.group).emit('chat', data);
     })
 
