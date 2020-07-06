@@ -102,6 +102,10 @@ h2{
     color: #575ed8;
 }
 
+.handle_name {
+    color: #575ed8
+}
+
 label{
     box-sizing: border-box;
     display: block;

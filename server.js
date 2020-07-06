@@ -181,11 +181,27 @@ io.on('connection', function (socket) {
         io.sockets.to(data.group).emit('chat', data);
     })
 
+    socket.on('remove_group', function (data) {
+        console.log('remove_group: ', data)
+        io.sockets.emit('remove_group', data);
+    })
+
+    socket.on('member_removed', function (data) {
+        console.log('member_removed: ', data)
+        socket.broadcast.emit('member_removed', data);
+    })
+    
+    socket.on('member_added', function (data) {
+        console.log('member_added: ', data)
+        socket.broadcast.emit('member_added', data);
+    })
     socket.on('change_group', function (data) {
-        socket.leave(data.oldGroup);
-        socket.broadcast.to(data.oldGroup).emit('chat', { handle: data.handle, message: `${data.handle} saiu do grupo` });
-        socket.join(data.newGroup);
-        socket.broadcast.to(data.newGroup).emit('chat', { handle: data.handle, message: `${data.handle} entrou no grupo` });
-        console.log(`${data.handle} saiu do grupo ${data.oldGroup} entrou em ${data.newGroup}`);
+        if (data.oldGroup !== data.newGroup) {
+            socket.leave(data.oldGroup);
+            socket.broadcast.to(data.oldGroup).emit('chat', { handle: data.handle, message: `${data.handle} saiu do grupo` });
+            socket.join(data.newGroup);
+            socket.broadcast.to(data.newGroup).emit('chat', { handle: data.handle, message: `${data.handle} entrou no grupo` });
+            console.log(`${data.handle} saiu do grupo ${data.oldGroup} entrou em ${data.newGroup}`);
+        }
     })
 });
