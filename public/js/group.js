@@ -34,6 +34,8 @@ const chooseGroup = (e) => {
     }).catch(err => {
         console.log('Erro Mensagens do Grupo: ', err);
     })
+
+    
 }
 
 $groupButtons.on('click', chooseGroup);
@@ -139,5 +141,6 @@ $('.close_modal').on('click', (e) => {
     e.preventDefault();
     closeAllModals();
 })
+
 
 

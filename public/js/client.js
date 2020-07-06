@@ -14,7 +14,9 @@ const user = {
     email: localStorage.getItem('logged_user_email'),
     name: localStorage.getItem('logged_user_name')
 }
-let currentGroup = "Group 1";
+let currentGroup = "Group 2";
+
+async function reloadMessages(){
 fetch(`http://localhost:4000/group/${currentGroup}/messages`).then(res => {
     return res.json();
 }).then(data => {
@@ -25,7 +27,9 @@ fetch(`http://localhost:4000/group/${currentGroup}/messages`).then(res => {
 }).catch(err => {
     console.log('Erro Mensagens do Grupo: ', err);
 })
+}
 
+window.setInterval(reloadMessages, 1000);
 $('#handle').val(user.name);
 
 console.log("Email Logado: ", user.email);
