@@ -20,6 +20,22 @@ function createGroup(group) {
     });
 }
 
+function removeGroup(group) {
+    return new Promise(async (resolve, reject) => {
+        let con = await database.getConnection();
+
+        con.connect(function (err) {
+            if (err) reject({ created: false, error: err });
+            var sql = `DELETE FROM groups WHERE name = '${group.name}'`;
+
+            con.query(sql, function (err, result) {
+                if (err) reject({ removed: false, error: err });
+                resolve({ removed: true });
+            });
+        });
+    });
+}
+
 function isInGroup(user, group) {
     return new Promise(async (resolve, reject) => {
         let con = await database.getConnection();
@@ -95,4 +111,4 @@ function getGroups(user) {
     });
 }
 
-module.exports = {createGroup, addUser, isInGroup, removeUser, getGroups}
+module.exports = { createGroup, removeGroup, addUser, isInGroup, removeUser, getGroups}

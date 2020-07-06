@@ -1,5 +1,3 @@
-let currentGroup = "grupo1";
-
 const $groupButtons = $('button.group');
 
 const $openCreateGroupModalBtn = $('#create_group_btn');
@@ -26,7 +24,16 @@ const chooseGroup = (e) => {
     socket.emit('change_group', { handle: handle.value, oldGroup: currentGroup, newGroup: newGroupName });
     currentGroup = newGroupName;
     // pega mensagens anteriores do grupo
-    // fetch(/group/:groupId/messages)
+    fetch(`http://localhost:4000/group/${currentGroup}/messages`).then(res => {
+        return res.json();
+    }).then(data => {
+        output.innerHTML = "";
+        data.messages.map(messageObj => {
+            output.innerHTML += '<p><strong>' + messageObj.userSent + ': </strong>' + messageObj.msg + '</p>';
+        })
+    }).catch(err => {
+        console.log('Erro Mensagens do Grupo: ', err);
+    })
 }
 
 $groupButtons.on('click', chooseGroup);
@@ -55,12 +62,21 @@ $createCreateGroupBtn.on('click', (e) => {
     e.preventDefault();
     const groupName = $('#group_name').val();
     console.log(groupName);
-    $('#groups').append(`<button class="group" id="${groupName}">${groupName}</button>`).on('click', chooseGroup);
-    // fetch('/group',{method: post}, { groupName, myId })
-    //     .then(res => res.json())
-    //     .then(res => {
-    //         // cria novo botao de grupo
-    //     })
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    fetch('http://localhost:4000/group', {
+        method: 'POST',
+        body: JSON.stringify({
+            name: groupName,
+            owner: user.email
+        }),
+        headers: myHeaders
+    })
+    .then(res => res.json())
+    .then(data => {
+        $('#groups').append(`<button class="group" id="${groupName}">${groupName}</button>`).on('click', chooseGroup);
+        console.log(data);
+    })
     $createGroupModal.removeClass('show');
     $createGroupModal.addClass('hide');
 });
@@ -69,28 +85,53 @@ $createCreateGroupBtn.on('click', (e) => {
 $removeGroupBtn.on('click', (e) => {
     e.preventDefault();
     $(`#${currentGroup}`).remove();
-        // fetch('', { groupName })
-    //     .then(res => res.json())
-    //     .then(res => {
-    //         // remove grupo
-    //     })
+    fetch(`http://localhost:4000/group/${currentGroup}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(res => {
+            console.log('Grupo Removido.');
+        }).catch(err => {
+            console.log('Erro ao remover Usuario: ', userEmail);
+        })
 })
 
 // add user in group
 $addUserGroupBtn.on('click', (e) => {
     e.preventDefault();
     const userEmail = $('#add_user_email').val();
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
     console.log(userEmail);
-    // fetch('', {email, groupId})
-    // recebe added: true ou false
+    fetch(`http://localhost:4000/group/user/add`, {
+        method: 'POST',
+        body: JSON.stringify({
+            email: userEmail,
+            group: currentGroup
+        }),
+        headers: myHeaders
+    })
+        .then(res => res.json())
+        .then(res => {
+            console.log('Usuario Adicionado');
+            closeAllModals();
+        }).catch(err => {
+            console.log('Erro ao adicionar Usuario: ', userEmail);
+            closeAllModals();
+        })
 })
 
 $removeUserGroupBtn.on('click', (e) => {
     e.preventDefault();
     const userEmail = $('#remove_user_email').val();
     console.log(userEmail);
-    // fetch('', {email, groupId})
-    // recebe removed: true ou false
+    fetch(`http://localhost:4000/group/${currentGroup}/user/${userEmail}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(res => {
+            console.log('Usuario Removido.');
+            closeAllModals();
+        }).catch(err => {
+            console.log('Erro ao remover Usuario: ', userEmail);
+            closeAllModals();
+        })
 })
 
 // close any modal
