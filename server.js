@@ -13,7 +13,7 @@ app.use(express.json());
 app.use('/', express.static('public'));
 
 // Tela inicial do chat
-app.get('/', function (req, res) {
+app.get('/chat', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
@@ -170,7 +170,7 @@ const server = app.listen(4000, function () {
 
 var io = socket(server);
 
-io.on('connection', function (socket) {
+io.of('/chat').on('connection', function (socket) {
     // quando começa o chat já entra no grupo geral
     socket.join("Group 1");
 
