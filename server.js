@@ -13,7 +13,7 @@ app.use(express.json());
 app.use('/', express.static('public'));
 
 // Tela inicial do chat
-app.get('/chat', function (req, res) {
+app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
@@ -28,7 +28,10 @@ app.post('/authenticate', cors(), async (req,res) => {
         login: req.body.login,
         password_hash: md5(req.body.password)
     };
-    console.log('auth: ', user);
+    console.log('localhost:4000/authenticate method=POST');
+    console.log('Login: ', user);
+    
+
     try {
         const response = await users.authenticate(user);
         if (response.valid) return res.status(200).send(JSON.stringify(response));
@@ -45,7 +48,9 @@ app.post('/user/add', cors(), async (req,res) => {
         name: req.body.name,
         password_hash: md5(req.body.password)
     };
-    console.log('add user: ', user);
+    console.log('\nlocalhost:4000/user/add method=POST');
+    console.log('Cria Usuario: ', user);
+    
     try {
         const response = await users.storeUser(user);
         if (response.added) return res.status(200).send(JSON.stringify(response));
@@ -61,7 +66,9 @@ app.post('/group', async (req, res) => {
         name: req.body.name,
         owner: req.body.owner
     }
-    console.log('create group: ', group);
+    console.log('\nlocalhost:4000/group method=POST');
+    console.log('Cria Grupo: ', group);
+    
     try {
         const response = await groups.createGroup(group);
         if (response.created) {
@@ -78,7 +85,10 @@ app.post('/group', async (req, res) => {
 // Rota para remoção de grupo
 app.delete('/group/:groupName', async (req, res) => {
     const group = { name: decodeURI(req.params.groupName) }
-    console.log('remove group: ', group);
+    console.log('\nlocalhost:4000/group/:groupName method=DELETE');
+    console.log('Deleta Grupo: ', group);
+    
+
     try {
         const response = await groups.removeGroup(group);
         if (response.removed) return res.status(200).send(JSON.stringify(response));
@@ -94,7 +104,10 @@ app.post('/group/user/add', async (req, res) => {
         email: req.body.email,
         group: req.body.group
     }
-    console.log('add to group: ', info);
+    console.log('\nlocalhost:4000/group/user/add method=POST');
+    console.log('Adiciona Membro: ', info);
+    
+
     try {
         const response = await groups.addUser(info);
         if (response.added) return res.status(200).send(JSON.stringify(response));
@@ -110,7 +123,9 @@ app.delete('/group/:groupName/user/:userEmail', async (req, res) => {
         email: req.params.userEmail,
         group: req.params.groupName
     }
-    console.log('remove from group: ', info);
+    console.log('\nlocalhost:4000/group/:groupName/user/:userEmail method=DELETE');
+    console.log('Remove Membro: ', info);
+    
     try {
         const response = await groups.removeUser(info);
         if (response.removed) return res.status(200).send(JSON.stringify(response));
@@ -124,9 +139,12 @@ app.delete('/group/:groupName/user/:userEmail', async (req, res) => {
 // Uso essa rota quando usuario entra na pagina do chat para preencher os grupos da tela
 app.get('/user/:userEmail/groups', async (req, res) => {
     const userEmail = req.params.userEmail;
-    console.log('get groups: ', userEmail);
     try {
         const response = await groups.getGroups(userEmail);
+        console.log('\nlocalhost:4000/user/:userEmail/groups method=GET');
+        console.log('Pega Grupos do Usuario: ', response);
+        
+        
         res.status(200).send(JSON.stringify(response));
     } catch (error) {
         res.status(400).send(error);
@@ -140,7 +158,9 @@ app.post('/message', async (req, res) => {
         groupName: req.body.groupName,
         message: req.body.message
     }
-    console.log('save message: ', msg);
+    console.log('\nlocalhost:4000/message method=POST');
+    console.log('Salva Mensagem: ', msg);
+    
     try {
         const response = await messages.saveMessage(msg);
         if (response.saved) return res.status(200).send(JSON.stringify(response));
@@ -154,9 +174,11 @@ app.post('/message', async (req, res) => {
 // Uso quando o usuario seleciona um grupo eu pego as mensagens anteriores
 app.get('/group/:groupName/messages', async (req, res) => {
     const groupName = req.params.groupName;
-    console.log('get messages: ', groupName);
     try {
         const response = await messages.getMessages(groupName);
+        console.log('\nlocalhost:4000/group/:groupName/messages method=GET');
+        console.log('Pega Mensagens do Grupo: ', response);
+        
         if(!response.error) return res.status(200).send(JSON.stringify(response));
         res.status(200).send(JSON.stringify(response));
     } catch (error) {
@@ -170,38 +192,37 @@ const server = app.listen(4000, function () {
 
 var io = socket(server);
 
-io.of('/chat').on('connection', function (socket) {
+io.on('connection', function (socket) {
     // quando começa o chat já entra no grupo geral
-    socket.join("Group 1");
 
     console.log(`Um cliente se conectou!\tid = ${socket.id}`);
     
     socket.on('chat', function (data) {
-        console.log('here: ', data)
+        console.log('Mensagem Enviada: ', data)
         io.sockets.to(data.group).emit('chat', data);
     })
 
     socket.on('remove_group', function (data) {
-        console.log('remove_group: ', data)
+        console.log('Remove Grupo: ', data)
         io.sockets.emit('remove_group', data);
     })
 
     socket.on('member_removed', function (data) {
-        console.log('member_removed: ', data)
+        console.log('Remove Membro: ', data)
         socket.broadcast.emit('member_removed', data);
     })
     
     socket.on('member_added', function (data) {
-        console.log('member_added: ', data)
+        console.log('Adiciona Membro: ', data)
         socket.broadcast.emit('member_added', data);
     })
     socket.on('change_group', function (data) {
         if (data.oldGroup !== data.newGroup) {
             socket.leave(data.oldGroup);
-            socket.broadcast.to(data.oldGroup).emit('chat', { handle: data.handle, message: `${data.handle} saiu do grupo` });
+            // socket.broadcast.to(data.oldGroup).emit('chat', { handle: data.handle, message: `${data.handle} saiu do grupo` });
             socket.join(data.newGroup);
-            socket.broadcast.to(data.newGroup).emit('chat', { handle: data.handle, message: `${data.handle} entrou no grupo` });
-            console.log(`${data.handle} saiu do grupo ${data.oldGroup} entrou em ${data.newGroup}`);
+            // socket.broadcast.to(data.newGroup).emit('chat', { handle: data.handle, message: `${data.handle} entrou no grupo` });
+            console.log(`${data.handle} trocou do grupo ${data.oldGroup} para ${data.newGroup}`);
         }
     })
 });

@@ -5,6 +5,10 @@ let handle = document.getElementById('handle');
 let btn = document.getElementById('send');
 let output = document.getElementById('output');
 
+if (!localStorage.getItem('token')) {
+    window.location.href('http://localhost:4000/login')
+}
+
 const user = {
     email: localStorage.getItem('logged_user_email'),
     name: localStorage.getItem('logged_user_name')
@@ -38,17 +42,17 @@ socket.on('member_removed', function (data) {
     }
 });
 
-let currentGroup = "Group 1";
-fetch(`http://localhost:4000/group/${currentGroup}/messages`).then(res => {
-    return res.json();
-}).then(data => {
-    output.innerHTML = "";
-    data.messages.map(messageObj => {
-        output.innerHTML += '<p><strong>' + messageObj.userSent + ': </strong>' + messageObj.msg + '</p>';
-    })
-}).catch(err => {
-    console.log('Erro Mensagens do Grupo: ', err);
-})
+let currentGroup = "";
+// fetch(`http://localhost:4000/group/${currentGroup}/messages`).then(res => {
+//     return res.json();
+// }).then(data => {
+//     output.innerHTML = "";
+//     data.messages.map(messageObj => {
+//         output.innerHTML += '<p><strong>' + messageObj.userSent + ': </strong>' + messageObj.msg + '</p>';
+//     })
+// }).catch(err => {
+//     console.log('Erro Mensagens do Grupo: ', err);
+// })
 
 $('.handle_name').text(user.name);
 

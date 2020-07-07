@@ -20,7 +20,7 @@
         <div>
             <h2 class="d-inline">Bem Vindo <span class="handle_name"></span> </h2>
             <button id="create_group_btn" style="width: 200px; background-color: black ">Criar Grupo</button>
-            <a href="/login" class="btn" style="text-align:center; display: inline-block; width: 100px; background-color: grey ">Logout</a>
+        <a href="/login" class="btn" onclick="localStorage.removeItem('token');" style="text-align:center; display: inline-block; width: 100px; background-color: grey ">Logout</a>
         </div>
         <div id="chat-groups">
             <div id="groups">
@@ -37,7 +37,7 @@
         </div>
         <form>
             <input id="message" type="text" placeholder="Mensagem" />
-            <button id="send">Enviar</button>
+            <button id="send" style="height: 50px">Enviar</button>
         </form>
     </div>
 
