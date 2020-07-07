@@ -18,26 +18,26 @@
 <body>
     <div id="mario-chat">
         <div>
-            <h2 class="d-inline">Chat Socket.io</h2>
+            <h2 class="d-inline">Bem Vindo <span class="handle_name"></span> </h2>
             <button id="create_group_btn" style="width: 200px; background-color: black ">Criar Grupo</button>
+        <a href="/login" class="btn" onclick="localStorage.removeItem('token');" style="text-align:center; display: inline-block; width: 100px; background-color: grey ">Logout</a>
         </div>
         <div id="chat-groups">
             <div id="groups">
             </div>
             <div id="chat-window">
                 <div style="width: 100%; flex-direction: row; height: 50px">
-                    <button id="add_user_group_btn" style="float: right; width: 25%; margin: 5px">Novo Membro</button>
-                    <button id="remove_user_group_btn" style="float: right; width: 25%; margin: 5px">Remover
+                    <button id="remove_group" style="float: right; width: 28%; margin: 5px; font-size: 15px">Remover grupo</button>
+                    <button id="remove_user_group_btn" style="float: right; width: 28%; margin: 5px; font-size: 15px">Remover
                         Membro</button>
-                    <button id="remove_group" style="float: right; width: 25%; margin: 5px">Remover grupo</button>
+                    <button id="add_user_group_btn" style="float: right; width: 28%; margin: 5px; font-size: 15px">Novo Membro</button>
                 </div>
                 <div id="output"></div>
             </div>
         </div>
         <form>
-            <input id="handle" type="text" placeholder="Usuário" />
             <input id="message" type="text" placeholder="Mensagem" />
-            <button id="send">Enviar</button>
+            <button id="send" style="height: 50px">Enviar</button>
         </form>
     </div>
 

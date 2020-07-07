@@ -102,6 +102,10 @@ h2{
     color: #575ed8;
 }
 
+.handle_name {
+    color: #575ed8
+}
+
 label{
     box-sizing: border-box;
     display: block;
@@ -121,7 +125,7 @@ input{
     font-size: 16px;
 }
 
-button{
+button, .btn{
     background: #575ed8;
     color: #fff;
     font-size: 18px;
@@ -131,6 +135,7 @@ button{
     border-color: rgb(45, 49, 49);
     border-radius: 0 0 2px 2px;
     cursor: pointer;
+    text-decoration: none;
 }
 
 
